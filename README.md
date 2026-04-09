@@ -1,7 +1,5 @@
 # 🎮 Osva.Logic E-commerce — Gaming Store
 
-![Banner de Osva.Logic](https://via.placeholder.com/1200x400?text=Osva.Logic+Gamer+Store) 
-
 > **Osva.Logic** es una plataforma de comercio electrónico diseñada para entusiastas del gaming, ofreciendo una experiencia fluida para la compra de hardware, periféricos y artículos digitales.
 
 ---
