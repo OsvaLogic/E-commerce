@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ action }} Artefacto</title>
+    <style>
+        body { background-color: #09090b; color: #e4e4e7; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 40px; display: flex; justify-content: center; text-transform: uppercase;}
+        .form-container { background-color: #18181b; padding: 40px; width: 450px; border-top: 4px solid #8b5cf6; border-radius: 4px;}
+        h2 { font-weight: 900; font-size: 2.5rem; text-align: center; margin-top: 0; margin-bottom: 30px; letter-spacing: 1px; color: #8b5cf6;}
+        label { display: block; color: #a1a1aa; font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px;}
+        .val-input { width: 100%; box-sizing: border-box; background: #09090b; border: 1px solid #27272a; color: #e4e4e7; padding: 12px; margin-bottom: 25px; outline: none; transition: 0.3s; font-size: 1rem; text-transform: uppercase; border-radius: 4px;}
+        .val-input:focus { border-color: #06b6d4; }
+        .btn-submit { width: 100%; background-color: #8b5cf6; color: #ffffff; border: none; padding: 18px 40px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-top: 10px; letter-spacing: 1px; border-radius: 4px;}
+        .btn-submit:hover { background-color: #06b6d4; }
+        .cancel-link { display: block; text-align: center; color: #a1a1aa; text-decoration: none; margin-top: 20px; font-size: 0.8rem; font-weight: bold; transition: 0.3s;}
+        .cancel-link:hover { color: #06b6d4; }
+        .errorlist { color: #ef4444; list-style: none; padding: 0; font-size: 0.9rem; margin-top: -20px; margin-bottom: 15px; font-weight: bold; text-transform: none;}
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>{{ action }} PRODUCTO</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">CONFIRMAR</button>
+            <a href="{% url 'product_list' %}" class="cancel-link">CANCELAR</a>
+        </form>
+    </div>
+</body>
+</html>

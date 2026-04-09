@@ -1,0 +1,127 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito de Compras - Osva.Logic</title>
+    <style>
+        body { background-color: #09090b; color: #e4e4e7; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; text-transform: uppercase;}
+        .navbar { display: flex; justify-content: space-between; align-items: center; background-color: #18181b; padding: 20px 40px; border-bottom: 2px solid #8b5cf6;}
+        .nav-logo { font-weight: 900; font-size: 2rem; color: #e4e4e7; text-decoration: none; letter-spacing: 2px;}
+        .nav-logo span { color: #8b5cf6; }
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        .user-greeting { color: #06b6d4; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+        .nav-link { color: #a1a1aa; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; text-transform: uppercase;}
+        .nav-link:hover { color: #06b6d4; }
+        .container { padding: 40px; max-width: 1000px; margin: 0 auto; }
+        h1 { font-weight: 900; font-size: 3rem; text-align: center; margin-bottom: 40px; letter-spacing: 1px;}
+        h1 span { color: #8b5cf6; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 20px; text-align: left; border-bottom: 1px solid #27272a; vertical-align: middle;}
+        th { font-size: 0.9rem; color: #a1a1aa; }
+        .product-cell { display: flex; align-items: center; }
+        .product-cell img { width: 80px; height: 80px; object-fit: cover; background-color: #09090b; border: 1px solid #27272a; margin-right: 20px; border-radius: 4px;}
+        .product-name { font-size: 1.2rem; font-weight: bold; }
+        .product-price { font-weight: bold; }
+        .total-row td { font-size: 1.5rem; font-weight: bold; text-align: right; border-bottom: none; }
+        .total-label { color: #a1a1aa; }
+        .total-amount { color: #8b5cf6; }
+        .empty-cart { text-align: center; padding: 80px 0; }
+        .empty-cart h2 { font-size: 2rem; }
+        .btn-val { background-color: #8b5cf6; color: #ffffff; border: none; padding: 18px 40px; font-weight: bold; font-size: 1.2rem; text-decoration: none; display: inline-block; margin-top: 20px; transition: 0.3s; cursor: pointer; letter-spacing: 1px;}
+        .btn-val:hover { background-color: #06b6d4; color: #ffffff; }
+        .checkout-container { text-align: right; margin-top: 40px; }
+        .remove-btn { background: transparent; border: 2px solid #27272a; color: #a1a1aa; font-weight: bold; font-size: 1rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; transition: 0.3s;}
+        .remove-btn:hover { background: #ef4444; border-color: #ef4444; color: #ffffff;}
+        .qty-btn { background: #18181b; border: 1px solid #27272a; color: #e4e4e7; width: 28px; height: 28px; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+        .qty-btn:hover { background: #8b5cf6; border-color: #8b5cf6; color: #ffffff; }
+        
+        .footer { background-color: #09090b; border-top: 1px solid #27272a; padding: 40px 20px; text-align: center; margin-top: 60px; }
+        .footer-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .footer-logo { font-weight: 900; font-size: 1.5rem; color: #e4e4e7; letter-spacing: 2px; text-decoration: none; }
+        .footer-logo span { color: #8b5cf6; }
+        .footer-text { color: #a1a1aa; font-size: 0.9rem; margin: 0; }
+        .github-link { display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; text-decoration: none; font-weight: bold; transition: 0.3s; background: #18181b; padding: 10px 20px; border-radius: 4px; border: 1px solid #27272a; text-transform: none;}
+        .github-link:hover { background: #27272a; color: #ffffff; border-color: #06b6d4;}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'product_list' %}" class="nav-logo">Osva.<span>Logic</span></a>
+        <div class="nav-actions">
+            <div class="nav-user">
+                {% if user.is_authenticated %}
+                    <span class="user-greeting">HOLA, {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="nav-link">SALIR</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">INGRESAR</a>
+                    <a href="{% url 'register' %}" class="nav-link">REGISTRO</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>MI <span>CARRITO</span></h1>
+
+        {% if messages %}{% for message in messages %}<div class="msg success" style="text-align:center; padding:15px; margin-bottom:20px; background:#18181b; border-left: 4px solid #06b6d4; color: #06b6d4; font-weight: bold;">{{ message }}</div>{% endfor %}{% endif %}
+
+        {% if cart_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th style="text-align: right;">Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td><div class="product-cell"><img src="{% if item.product.image and item.product.image.name %}{{ item.product.image.url }}{% elif item.product.image_url %}{{ item.product.image_url }}{% else %}https://via.placeholder.com/100x100.png?text=No+Image{% endif %}" alt="{{ item.product.name }}"><span class="product-name">{{ item.product.name }}</span></div></td>
+                    <td class="product-price">${{ item.product.price|floatformat:"0"|intcomma }} CLP</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <form action="{% url 'subtract_from_cart' item.product.id %}" method="POST" style="margin: 0;">{% csrf_token %}<button type="submit" class="qty-btn">-</button></form>
+                            <span>{{ item.quantity }}</span>
+                            <form action="{% url 'add_to_cart' item.product.id %}" method="POST" style="margin: 0;">{% csrf_token %}<button type="submit" class="qty-btn">+</button></form>
+                        </div>
+                    </td>
+                    <td style="text-align: right;" class="product-price">${{ item.subtotal|floatformat:"0"|intcomma }} CLP</td>
+                    <td>
+                        <form action="{% url 'remove_from_cart' item.product.id %}" method="POST">{% csrf_token %}<button type="submit" class="remove-btn">X</button></form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td colspan="4" class="total-label">Total:</td>
+                    <td class="total-amount">${{ total_price|floatformat:"0"|intcomma }} CLP</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="checkout-container">
+            <a href="#" class="btn-val" onclick="alert('Funcionalidad de pago no implementada en este MVP.')">PROCEDER AL PAGO</a>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <h2>TU CARRITO ESTÁ VACÍO</h2>
+            <a href="{% url 'product_list' %}" class="btn-val">VOLVER A LA TIENDA</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="#" class="footer-logo">Osva.<span>Logic</span></a>
+            <p class="footer-text">Proyecto E-Commerce Gamer • Desarrollado con Django</p>
+            <a href="https://github.com/OsvaLogic" target="_blank" class="github-link">
+                <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                GitHub: OsvaLogic
+            </a>
+        </div>
+    </footer>
+</body>
+</html>

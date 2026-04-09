@@ -1,0 +1,183 @@
+{% load currency_filters %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Osva.Logic - Tienda Gamer</title>
+    <style>
+        /* Estética RGB Gamer: Dark, Morado y Cian */
+        body { background-color: #09090b; color: #e4e4e7; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; text-transform: uppercase;}
+        
+        /* Barra de Navegación */
+        .navbar { display: flex; justify-content: space-between; align-items: center; background-color: #18181b; padding: 20px 40px; border-bottom: 2px solid #8b5cf6;}
+        .nav-logo { font-weight: 900; font-size: 2rem; color: #e4e4e7; text-decoration: none; letter-spacing: 2px;}
+        .nav-logo span { color: #8b5cf6; }
+        
+        .nav-search { display: flex; flex: 1; max-width: 600px; margin: 0 40px; }
+        .nav-search input { width: 100%; padding: 12px 15px; background: #09090b; border: 1px solid #27272a; color: #e4e4e7; outline: none; text-transform: uppercase;}
+        .nav-search input:focus { border-color: #06b6d4; }
+        .nav-search button { background: #8b5cf6; border: none; color: #ffffff; padding: 0 25px; cursor: pointer; font-weight: bold; transition: 0.3s;}
+        .nav-search button:hover { background: #06b6d4; color: #ffffff; }
+        
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-user { display: flex; align-items: center; gap: 15px; border-right: 1px solid #27272a; padding-right: 20px; }
+        .user-greeting { color: #06b6d4; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+        .nav-link { color: #a1a1aa; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s; text-transform: uppercase;}
+        .nav-link:hover { color: #06b6d4; }
+        
+        .nav-cart { position: relative; display: flex; align-items: center; color: #e4e4e7; text-decoration: none; font-weight: bold; font-size: 1.2rem; transition: 0.3s;}
+        .nav-cart:hover { color: #8b5cf6; }
+        .cart-badge { background: #8b5cf6; color: #ffffff; border-radius: 50%; padding: 2px 8px; font-size: 0.8rem; position: absolute; top: -12px; right: -20px; border: 2px solid #18181b;}
+        
+        /* Contenedor Principal */
+        .container { padding: 40px; max-width: 1300px; margin: 0 auto; }
+        
+        /* Barra de Herramientas de Administrador */
+        .admin-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; background: #18181b; padding: 15px 25px; border-left: 4px solid #06b6d4; }
+        .admin-title { margin: 0; font-size: 0.9rem; color: #06b6d4; font-weight: bold; letter-spacing: 1px;}
+        .btn-admin { background-color: #06b6d4; color: #09090b; border: none; padding: 10px 20px; font-weight: bold; font-size: 0.9rem; text-decoration: none; transition: 0.3s; }
+        .btn-admin:hover { background-color: #ffffff; }
+        
+        /* Grid de la Tienda */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;}
+        
+        /* Tarjeta de Producto */
+        .product-card { background-color: #18181b; color: #e4e4e7; display: flex; flex-direction: column; position: relative; transition: 0.3s; border: 1px solid #27272a; border-top: 4px solid transparent;}
+        .product-card:hover { border-top: 4px solid #8b5cf6; transform: translateY(-8px); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2); border-color: #3f3f46; }
+        
+        .product-image { height: 180px; background-color: #09090b; background-size: cover; background-position: center; background-repeat: no-repeat; margin: 15px; border: 1px solid #27272a; border-radius: 4px;}
+        
+        /* Información */
+        .product-info { padding: 0 20px 20px 20px; text-align: left; flex-grow: 1;}
+        .product-category { color: #06b6d4; font-weight: bold; font-size: 0.85rem; letter-spacing: 2px; display: block; margin-bottom: 5px;}
+        .product-name { font-weight: 900; font-size: 1.4rem; margin: 0 0 5px 0; line-height: 1.2; letter-spacing: 0.5px;}
+        
+        .price-container { display: flex; align-items: center; margin-top: 15px;}
+        .vp-icon { width: 22px; height: 22px; background-color: #8b5cf6; border-radius: 50%; display: inline-block; margin-right: 8px; position: relative;}
+        .vp-icon::after { content: '$'; color: #ffffff; font-size: 14px; font-weight: bold; position: absolute; top: 1px; left: 6.5px;}
+        .product-price { font-size: 1.5rem; font-weight: bold; color: #e4e4e7;}
+        
+        .product-stock { color: #a1a1aa; font-size: 0.75rem; font-weight: bold; margin-top: 10px; display: block;}
+        
+        /* Botón Agregar al carrito */
+        .btn-cart { width: 100%; background-color: #8b5cf6; color: #ffffff; border: none; padding: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-cart:hover { background-color: #06b6d4; }
+        
+        /* Acciones de Administrador */
+        .admin-actions { display: flex; justify-content: space-between; background-color: #09090b; padding: 10px 20px; border-top: 1px solid #27272a;}
+        .admin-link { color: #a1a1aa; font-size: 0.75rem; text-decoration: none; font-weight: bold; transition: 0.3s; text-transform: uppercase;}
+        .admin-link:hover { color: #06b6d4; }
+        .admin-link.delete:hover { color: #ef4444; }
+        
+        /* Sistema de Mensajes */
+        .msg { padding: 15px; margin-bottom: 30px; background: #18181b; color: #e4e4e7; text-align: center; font-weight: bold; border-left: 5px solid #8b5cf6; text-transform: none;}
+        .msg.success { border-color: #06b6d4; color: #06b6d4; }
+        .msg.error { border-color: #ef4444; color: #ef4444; }
+        
+        /* Footer */
+        .footer { background-color: #09090b; border-top: 1px solid #27272a; padding: 40px 20px; text-align: center; margin-top: 60px; }
+        .footer-content { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .footer-logo { font-weight: 900; font-size: 1.5rem; color: #e4e4e7; letter-spacing: 2px; text-decoration: none; }
+        .footer-logo span { color: #8b5cf6; }
+        .footer-text { color: #a1a1aa; font-size: 0.9rem; margin: 0; }
+        .github-link { display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; text-decoration: none; font-weight: bold; transition: 0.3s; background: #18181b; padding: 10px 20px; border-radius: 4px; border: 1px solid #27272a; text-transform: none;}
+        .github-link:hover { background: #27272a; color: #ffffff; border-color: #06b6d4;}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'product_list' %}" class="nav-logo">Osva.<span>Logic</span></a>
+        
+        <form class="nav-search" method="GET" action="{% url 'product_list' %}">
+            <input type="text" name="q" placeholder="Buscar por nombre de producto..." value="{{ request.GET.q }}">
+            <button type="submit">BUSCAR</button>
+        </form>
+        
+        <div class="nav-actions">
+            <div class="nav-user">
+                {% if user.is_authenticated %}
+                    <span class="user-greeting">HOLA, {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="nav-link">SALIR</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">INGRESAR</a>
+                    <a href="{% url 'register' %}" class="nav-link">REGISTRO</a>
+                {% endif %}
+            </div>
+            <a href="{% url 'view_cart' %}" class="nav-cart">
+                🛒 CARRITO <span class="cart-badge">{{ cart_count|default:"0" }}</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if user.is_staff %}
+        <div class="admin-bar">
+            <p class="admin-title">MODO ADMINISTRADOR ACTIVO</p>
+            <div style="display: flex; gap: 15px;">
+                <a href="{% url 'product_create' %}" class="btn-admin">+ NUEVO PRODUCTO</a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="msg {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="store-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; flex-grow: 1;">
+                    <div class="product-image" style="background-image: url('{% if product.image and product.image.name %}{{ product.image.url }}{% elif product.image_url %}{{ product.image_url }}{% else %}https://via.placeholder.com/400x300.png?text=No+Image{% endif %}');"></div>
+                    <div class="product-info">
+                        <span class="product-category">{{ product.category.name }}</span>
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <div class="price-container">
+                            <div class="vp-icon"></div>
+                            <div class="product-price">{{ product.price|clp_format }} CLP</div>
+                        </div>
+                        <span class="product-stock">EN STOCK: {{ product.stock }}</span>
+                    </div>
+                </a>
+                
+                <form action="{% url 'add_to_cart' product.id %}" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-cart">AGREGAR AL CARRITO</button>
+                </form>
+                
+                {% if user.is_staff %}
+                <div class="admin-actions">
+                    <a href="{% url 'product_edit' product.id %}" class="admin-link">Editar</a>
+                    <a href="{% url 'product_delete' product.id %}" class="admin-link delete">Eliminar</a>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; margin-top: 40px;">
+                <h2 style="color: #8b5cf6; font-weight: 900; font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 1px;">TU INVENTARIO ESTÁ VACÍO</h2>
+                {% if user.is_staff %}
+                <form method="POST" action="{% url 'load_dummy_data' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-cart" style="width: auto; padding: 20px 50px;">GENERAR PRODUCTOS DE PRUEBA</button>
+                </form>
+                {% else %}
+                <p style="color:#a1a1aa; font-size: 1.2rem; margin-bottom: 30px;">No hay suministros disponibles en este momento.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="#" class="footer-logo">Osva.<span>Logic</span></a>
+            <p class="footer-text">Proyecto E-Commerce Gamer • Desarrollado con Django</p>
+            <a href="https://github.com/OsvaLogic" target="_blank" class="github-link">
+                <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                GitHub: OsvaLogic
+            </a>
+        </div>
+    </footer>
+</body>
+</html>
