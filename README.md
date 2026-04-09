@@ -25,12 +25,3 @@ Este proyecto fue construido utilizando herramientas modernas para garantizar es
 | **Git / GitHub** | Control de Versiones |
 
 ---
-
-## 📦 Instalación y Configuración
-
-Para replicar este proyecto localmente, sigue estos pasos:
-
-1. **Clona el repositorio:**
-   ```bash
-   git clone [https://github.com/tu-usuario/nombre-del-repo.git](https://github.com/tu-usuario/nombre-del-repo.git)
-   cd nombre-del-repo
