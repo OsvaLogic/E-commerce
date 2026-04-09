@@ -1,64 +1,38 @@
-Enlace de repositorio github: https://github.com/OsvaLogic/E-commerce.git
-1. Motor de Base de Datos Utilizado
+# 🎮 Osva.Logic E-commerce — Gaming Store
 
-Para este proyecto, estoy utilizando SQLite3 como motor de base de datos por defecto (o actualiza a PostgreSQL si configuras el settings.py), ideal para pruebas locales rápidas.
+![Banner de Osva.Logic](https://via.placeholder.com/1200x400?text=Osva.Logic+Gamer+Store) 
 
-2. Descripción del Modelo de Datos
+> **Osva.Logic** es una plataforma de comercio electrónico diseñada para entusiastas del gaming, ofreciendo una experiencia fluida para la compra de hardware, periféricos y artículos digitales.
 
-He definido mi estructura de datos en el archivo models.py utilizando las siguientes entidades y lógicas:
+---
 
-    Modelo Category: Lo utilizo para agrupar mis productos en categorías lógicas (como periféricos o hardware).
+## 🚀 Características Principales
 
-    Modelo Product: Es mi entidad principal. He incluido campos para el nombre, descripción, stock e imágenes. He aplicado una validación específica para asegurar que el precio siempre sea mayor a 0.
+* **Catálogo Dinámico:** Gestión completa de productos con categorías y filtros.
+* **Autenticación de Usuarios:** Registro e inicio de sesión seguro para clientes.
+* **Carrito de Compras:** Sistema persistente para añadir y gestionar productos antes del checkout.
+* **Panel de Administración:** Gestión de inventario y pedidos integrada.
+* **Diseño Responsivo:** Optimizado para dispositivos móviles y escritorio.
 
-    Relación: He implementado una relación de muchos a uno (ForeignKey) para vincular cada producto con su categoría correspondiente.
+## 🛠️ Stack Tecnológico
 
-3. Rutas Principales del Módulo de Administración
+Este proyecto fue construido utilizando herramientas modernas para garantizar escalabilidad y rendimiento:
 
-He habilitado las siguientes rutas para gestionar mi catálogo de productos:
+| Tecnología | Uso |
+| :--- | :--- |
+| **Python / Django** | Backend y Lógica de Negocio |
+| **PostgreSQL** | Base de Datos Relacional |
+| **HTML5 / CSS3 / JS** | Frontend Interactivo |
+| **Bootstrap** | Maquetación y Estilos |
+| **Git / GitHub** | Control de Versiones |
 
-    /products/: Aquí muestro el listado completo de mis productos.
+---
 
-    /products/create/: Utilizo esta ruta para desplegar el formulario de creación.
+## 📦 Instalación y Configuración
 
-    /products/edit/<id>/: Aquí permito la edición de productos existentes.
+Para replicar este proyecto localmente, sigue estos pasos:
 
-    /products/delete/<id>/: Esta ruta la destino a la eliminación de registros.
-
-Rutas de Cliente (Flujo de Compra):
-
-    /: Página principal y catálogo público de productos.
-    /login/ y /logout/: Autenticación de usuarios.
-    /cart/: Visualización y gestión del carrito de compras (agregar, actualizar, eliminar).
-    /checkout/: Confirmación de la compra y registro del pedido asociado al usuario.
-
-4. Pasos para Ejecutar el Proyecto
-
-Para que puedas desplegar mi proyecto localmente, sigue estos pasos que he preparado:
-
-    Entorno virtual: Lo creo con python -m venv venv y lo activo según mi sistema operativo.
-
-    Instalación: Ejecuto pip install -r requirements.txt para cargar las dependencias.
-
-    Migraciones: Sincronizo mi base de datos con python manage.py makemigrations y python manage.py migrate.
-
-    Ejecución: Inicio mi servidor de desarrollo con python manage.py runserver.
-
-5. Credenciales de Prueba
-
-Para probar el sistema, puedes utilizar los siguientes usuarios:
-* **Administrador:** Usuario: `admin_test` | Contraseña: `password123` (Acceso total al CRUD de productos)
-* **Cliente:** Usuario: `cliente_test` | Contraseña: `password123` (Acceso al catálogo y carrito de compras)
-
-6. Evidencias del Proyecto
-
-A continuación, presento las capturas de pantalla que demuestran el funcionamiento de los requerimientos:
-
-**Listado de Productos:**
-![Listado de Productos](<Capturas de pantalla/Captura de pantalla 2026-03-29 200955.png>)
-
-**Formulario de Creación/Edición:**
-![Formulario de Producto](<Capturas de pantalla/Captura de pantalla 2026-03-29 195510.png>)
-
-**Panel de Administración de Django:**
-![Panel Administrativo](<Capturas de pantalla/Captura de pantalla 2026-04-08 220912.png>)
+1. **Clona el repositorio:**
+   ```bash
+   git clone [https://github.com/tu-usuario/nombre-del-repo.git](https://github.com/tu-usuario/nombre-del-repo.git)
+   cd nombre-del-repo
