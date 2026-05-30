@@ -1,0 +1,7 @@
+# Ignorar todos los archivos PDF
+*.pdf
+
+# Ignorar caché y entornos virtuales de Python
+__pycache__/
+*.pyc
+venv/
