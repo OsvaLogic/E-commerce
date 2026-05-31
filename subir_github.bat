@@ -1,11 +1,16 @@
 @echo off
-echo Preparando la version v.1.2 para subir a GitHub...
+echo Preparando la actualizacion para subir a GitHub con fecha de ayer...
 git init
 git add .
-git commit -m "v.1.2"
+
+set GIT_COMMITTER_DATE=yesterday
+git commit --date="yesterday" -m "v.1.4: Arquitectura Headless, Celery y variables de entorno"
+
 git branch -M main
 :: Intenta actualizar la URL remota si existe, si no, la agrega.
 git remote set-url origin https://github.com/OsvaLogic/E-commerce.git 2>nul || git remote add origin https://github.com/OsvaLogic/E-commerce.git
-git push -u origin main --force
+git tag v.1.4
+git push origin main
+git push origin v.1.4
 echo ¡Proceso completado! Revisa tu repositorio en GitHub.
 pause

@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!2s^h5m*5au!)sey!7)wu_3ilom5o+#tjevbu_tw0zj+t$yv)b'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-!2s^h5m*5au!)sey!7)wu_3ilom5o+#tjevbu_tw0zj+t$yv)b')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -81,11 +86,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'econmerce',  
-        'USER': 'osvaldo_encomerce', 
-        'PASSWORD': 'admin123', 
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('POSTGRES_DB', 'econmerce'),  
+        'USER': os.getenv('POSTGRES_USER', 'osvaldo_encomerce'), 
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'admin123'), 
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -142,8 +147,8 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True  # En producción, cambia esto por tu dominio exacto de Next.js
 
 # --- CONFIGURACIÓN DE CELERY Y REDIS ---
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

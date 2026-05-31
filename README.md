@@ -1,31 +1,45 @@
-# Osva.Logic - E-Commerce Gamer (Módulo 7 - Acceso a Datos)
+# Osva.Logic - E-Commerce Gamer (Headless API Enterprise)
 
-## 1. Propósito del Proyecto
-Implementación de la capa de acceso a datos de un e-commerce utilizando Django y su ORM. Este módulo permite administrar un catálogo de productos mediante operaciones CRUD completas (Crear, Leer, Actualizar, Eliminar), implementando el patrón MVC (MTV en Django) con una estética y diseño enfocados al mundo Gamer.
+## 1. Arquitectura y Propósito
+Osva.Logic es un backend de E-commerce diseñado bajo una arquitectura **Headless**. Se ha construido como una API RESTful utilizando Django REST Framework (DRF), separando completamente la lógica de negocio y acceso a datos de la interfaz de usuario.
+Esta arquitectura está preparada para escalar, implementando autenticación segura por tokens (JWT) y procesamiento asíncrono de tareas pesadas en segundo plano.
 
-## 2. Motor de Base de Datos Utilizado
-Este proyecto está configurado para utilizar **PostgreSQL** como motor de base de datos relacional principal, gestionado a través de la librería `psycopg2-binary`.
+## 2. Stack Tecnológico
+* **Framework Principal:** Django & Django REST Framework (DRF)
+* **Base de Datos Transaccional:** PostgreSQL 14
+* **Autenticación:** SimpleJWT (JSON Web Tokens)
+* **Caché y Broker de Mensajes:** Redis
+* **Procesamiento Asíncrono:** Celery (Ej: envío de correos, integraciones)
+* **Infraestructura:** Docker & Docker Compose
 
 ## 3. Descripción del Modelo de Datos
-El modelo de datos se estructura en dos entidades principales relacionadas mediante el ORM de Django:
-* **Category:** Entidad independiente que agrupa los productos (ej. Periféricos, Monitores). Contiene un campo de nombre (`CharField`).
-* **Product:** Entidad principal del catálogo. Incluye atributos como `name` (Nombre), `description` (Descripción textual), `price` (Precio decimal validado para ser mayor a 0), `stock` (Inventario), y campos para imágenes (`image` como archivo y `image_url` como enlace). 
-* **Relación:** `Product` tiene una relación de muchos a uno (`ForeignKey`) con `Category`.
+El modelo de datos gestiona el ciclo de vida completo de un e-commerce:
+* **Category:** Agrupación de productos (ej. Periféricos, Monitores).
+* **Product:** Catálogo principal con `stock`, `price`, e imágenes. Relacionado (N:1) a Category.
+* **Order & OrderItem:** Registro transaccional de compras con historial de productos, cantidad, precio fijo en el momento de compra y total. Manejo seguro con transacciones atómicas (`select_for_update`).
 
-## 4. Rutas Principales del Módulo de Administración
-El proyecto expone las siguientes rutas principales para la gestión CRUD:
-* `GET /products/` : Listado completo de productos en el catálogo.
-* `GET/POST /products/create/` : Renderiza y procesa el formulario para crear un nuevo producto.
-* `GET/POST /products/edit/<id>/` : Renderiza y procesa el formulario para modificar un producto existente.
-* `GET/POST /products/delete/<id>/` : Pantalla de confirmación y lógica de eliminación física del producto en la base de datos.
+## 4. Endpoints de la API (Rutas Principales)
+La API está habilitada para CORS (Next.js / React) y responde en formato JSON:
 
-## 5. Pasos para Ejecutar el Proyecto
-Para desplegar este proyecto en un entorno local, sigue estas instrucciones:
+### Autenticación (JWT)
+* `POST /api/token/` : Envía credenciales (`username`, `password`) y recibe tokens de acceso y refresco.
+* `POST /api/token/refresh/` : Renueva un token de acceso vencido.
 
-1. **Crear y activar el entorno virtual:**
-   ```bash
-   python -m venv venv
-   # Windows:
-   venv\Scripts\activate
-   # Mac/Linux:
-   source venv/bin/activate
+### Catálogo (Público / Admin)
+* `GET /api/products/` : Lista el catálogo completo (Soporta búsqueda `?q=termino`).
+* `GET /api/products/{id}/` : Detalle de un producto específico.
+* `POST /api/products/` : Crear producto (Requiere autenticación de Staff/Admin).
+
+### Transacciones (Requiere Autenticación)
+* `POST /api/checkout/` : Procesa el carrito de compras, resta stock, crea la orden y dispara tareas en segundo plano.
+  * **Payload esperado:** `{"cart": {"id_producto": cantidad, "id_producto2": cantidad}}`
+  * **Header:** `Authorization: Bearer <access_token>`
+
+## 5. Despliegue y Ejecución Rápida (Docker)
+El proyecto está completamente contenerizado, lo que significa que no necesitas instalar PostgreSQL o Redis en tu máquina anfitriona.
+
+Asegúrate de tener Docker Desktop instalado y ejecuta:
+
+```bash
+# Construir imágenes y levantar todos los servicios (Django, DB, Redis, Celery)
+docker-compose up --build
